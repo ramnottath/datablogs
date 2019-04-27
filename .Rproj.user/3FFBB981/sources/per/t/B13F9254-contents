@@ -1,0 +1,250 @@
+---
+title: "Can Money Buy Political Power"
+author: "Ramkumar Nottath"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+3.	Read the file: data <- read.csv("election_campaign_data.csv", sep=",", header=T, strip.white = T, na.strings = c("NA","NaN","","?")) 
+```{r read data}
+getwd()
+setwd("/Volumes/GoogleDrive/My Drive/DSBA 6211 ABA/Assignment_01")
+# Import data:
+data <- read.csv("election_campaign_data.csv", sep=",", header=T, strip.white = T, na.strings = c("NA","NaN","","?")) 
+```
+4.	Drop the following variables from the data: "cand_id", "last_name", "first_name", "twitterbirth", "facebookdate", "facebookjan", "youtubebirth".
+```{r remove columns}
+data$cand_id <- NULL
+data$last_name <- NULL
+data$first_name <- NULL
+data$twitterbirth <- NULL
+data$facebookdate <- NULL
+data$facebookjan <- NULL
+data$youtubebirth <- NULL
+summary(data)
+```
+5.	Convert the following variables into factor variables using function as.factor(): “twitter”, “facebook”, “youtube”, “cand_ici”, and “gen_election”.
+```{r convert to factor}
+data$twitter <- as.factor(data$twitter)
+data$facebook <- as.factor(data$facebook)
+data$youtube <- as.factor(data$youtube)
+data$cand_ici <- as.factor(data$cand_ici)
+data$gen_election <- as.factor(data$gen_election)
+summary(data)
+```
+7.	Remove all of the observations with any missing values using function complete.cases()
+```{r remove incomplete records}
+nrow(data) # Before removing incomplete records
+data <- data[complete.cases(data),]
+nrow(data) # After removing incomplete records
+```
+8.	Randomly assign 70% of the observations to train_data and the remaining observations to test_data
+```{r}
+set.seed(1234)
+indexes = sample(1:nrow(data), size=0.7*nrow(data))
+nrow(data) # Total number of records
+data.train=data[indexes,]
+nrow(data.train) # Number of records in train
+data.test=data[-indexes,]
+nrow(data.test) # Number of records in test
+```
+9.	Use train_data to build a random forest classifier with 10 trees. Use library(randomForest). 
+
+```{r build RF model with ntree 10}
+library(randomForest)
+set.seed(1234)
+rf10 <-randomForest(gen_election~., data=data.train, ntree=10, na.action=na.exclude, importance=T,
+                  proximity=T) 
+print(rf10)
+```
+9.1.	(2 points) What is the OOB estimate of error rate? \s
+      Answer: 9.46% 
+
+9.2.	(2 points) How many variables R tried at each split? \s
+      Answer: 5
+      
+9.3.	(4 points) Now use 20 trees.
+
+```{r build RF model with ntree 20}
+set.seed(1234)
+rf20 <-randomForest(gen_election~., data=data.train, ntree=20, na.action=na.exclude, importance=T,
+                  proximity=T) 
+print(rf20)
+```
+9.3.1.	 What is OOB estimate of error rate? \s
+      Answer: 8.77%
+
+9.3.2.	 How many variables R tried at each split? \s
+      Answer: 5
+
+9.4.	(4 points) Now use 30 trees. 
+```{r build RF model with ntree 30}
+set.seed(1234)
+rf30 <-randomForest(gen_election~., data=data.train, ntree=30, na.action=na.exclude, importance=T,
+                  proximity=T) 
+print(rf30)
+```
+9.4.1.	 What is OOB estimate of error rate? \s
+      Answer: 7.69%
+9.4.2.	 How many variables R tried at each split? \s
+      Answer: 5
+9.5.	(2 points) Increase the number of trees in 10 increments (e.g. 40, 50, …). Using OOB error rate to evaluate your random forest classifier, how many trees would you recommend? 
+```{r build RF model with ntree different ntree}
+set.seed(1234)
+rf40 <-randomForest(gen_election~., data=data.train, ntree=40, na.action=na.exclude, importance=T,
+                  proximity=T) 
+print(rf40)
+rf50 <-randomForest(gen_election~., data=data.train, ntree=50, na.action=na.exclude, importance=T,
+                  proximity=T) 
+print(rf50)
+rf60 <-randomForest(gen_election~., data=data.train, ntree=60, na.action=na.exclude, importance=T,
+                  proximity=T) 
+print(rf60)
+rf70 <-randomForest(gen_election~., data=data.train, ntree=70, na.action=na.exclude, importance=T,
+                  proximity=T) 
+print(rf70)
+rf80 <-randomForest(gen_election~., data=data.train, ntree=80, na.action=na.exclude, importance=T,
+                  proximity=T) 
+print(rf80)
+rf90 <-randomForest(gen_election~., data=data.train, ntree=90, na.action=na.exclude, importance=T,
+                  proximity=T) 
+print(rf90)
+rf100 <-randomForest(gen_election~., data=data.train, ntree=100, na.action=na.exclude, importance=T,
+                  proximity=T) 
+print(rf100)
+```
+9.6.	(2 points) Use tuneRF() function to find the best value for mtry. Here is the code:
+mtry <- tuneRF(train_data[-26], train_data$gen_election, ntreeTry=n,  stepFactor=1.5, improve=0.01, trace=TRUE, plot=TRUE, , na.action=na.exclude). Replace n with the number of trees you recommended in 9.5. What is the recommended value for mtry? 
+
+Answer: Based on the below plot, recommended value of mtry is 5.
+```{r Tune RF}
+set.seed(1234)
+best.mtry <- tuneRF(data.train[-26], data.train$gen_election, ntreeTry=70,  stepFactor=1.5, improve=0.01, trace=TRUE, plot=TRUE, na.action=na.exclude)
+mtry
+```
+```{r optimized RF}
+set.seed(1234)
+rf <-randomForest(gen_election~., data=data.train, ntree=70, mtry=best.mtry, na.action=na.exclude, importance=T,
+                  proximity=T) 
+print(rf)
+```
+9.8.	(8 points) Use library(caret)  and the code in Module 6 to create the confusion matrix for test_data. Fill out the confusion matrix in below. Use “W” as the value of option positive in confusionMatrix() function. 
+9.8.1.	What is the value of accuracy? 
+9.8.2.	What is the value of TPR? 
+9.8.3.	What is the value of FPR? 
+```{r }
+library(caret)
+predicted_values <- predict(rf, data.test) # Use the classifier to make the predictions. With the package that we used, type "raw" will give us the probabilities 
+head(predicted_values)
+confusionMatrix(predicted_values, data.test$gen_election, positive = levels(data.test$gen_election)[2]) 
+```
+9.9.	(4 points) Use the code in Module 6 to calculate AUC and create the ROC curve. 
+9.9.1.	 What is the value of AUC? 
+9.9.2.	Paste the ROC curve in the space below:
+```{r }
+library(ROCR)
+library(ggplot2)
+predicted_values <- predict(rf, data.test, type = "prob")[,2]
+head(predicted_values)
+threshold <- 0.5
+pred <- factor( ifelse(predicted_values[,2] > threshold, 1, 0) )
+levels(data.test$salary.class)[2]
+
+pred <- prediction(predicted_values, data.test$gen_election)
+perf <- performance(pred, measure = "tpr", x.measure = "fpr")
+auc <- performance(pred, measure = "auc")
+auc <- auc@y.values[[1]]
+roc.data <- data.frame(fpr=unlist(perf@x.values),
+                       tpr=unlist(perf@y.values),
+                       model="Random Forest")
+ggplot(roc.data, aes(x=fpr, ymin=0, ymax=tpr)) +
+  geom_ribbon(alpha=0.2) +
+  geom_line(aes(y=tpr)) +
+  ggtitle(paste0("ROC Curve w/ AUC=", auc))
+```
+```{r }
+#Evaluate variable importance
+importance(rf)
+varImpPlot(rf)
+```
+10.	Use library(nnet) and the code in Module 6 to build a neural network classifier. 
+10.1.	(20 points) Use 5 hidden nodes in your ANN. 
+10.1.1.	How many input nodes are in the ANN? 
+10.1.2.	How many weights are in the ANN? 
+```{r ANN}
+library(nnet)
+ann <- nnet(gen_election ~ ., data=data.train, size=5, maxit=1000) # Size is the number of units (nodes) in the hidden layer.
+summary(ann)
+```
+10.1.3.	Use library(caret) and the code in Module 6 to create the confusion matrix for test_data. Fill out the confusion matrix in below. Use “W” as the value of option positive in confusionMatrix() function.
+```{r Confusion Matrix}
+predicted_ann <- predict(ann, data.test) 
+head(predicted_ann)
+threshold <- 0.5 
+pred <- factor( ifelse(predicted_ann[,1] > threshold, "W", "L") )
+head(pred)
+confusionMatrix(pred, data.test$gen_election, positive = levels(data.test$gen_election)[2]) 
+```
+10.1.6.	Use the code in Module 6 to calculate AUC and create the ROC curve. 
+10.1.6.1.	What is the value of AUC? 
+10.1.6.2.	Paste the ROC curve in the space below:
+```{r }
+library(ROCR)
+library(ggplot2)
+predicted_values <- predict(ann, data.test,type = "raw")
+pred <- prediction(predicted_values, data.test$gen_election)
+perf <- performance(pred, measure = "tpr", x.measure = "fpr")
+auc <- performance(pred, measure = "auc")
+auc <- auc@y.values[[1]]
+roc.data <- data.frame(fpr=unlist(perf@x.values),
+                       tpr=unlist(perf@y.values),
+                       model="ANN")
+ggplot(roc.data, aes(x=fpr, ymin=0, ymax=tpr)) +
+  geom_ribbon(alpha=0.2) +
+  geom_line(aes(y=tpr)) +
+  ggtitle(paste0("ROC Curve w/ AUC=", auc))
+
+```
+10.2.	(6 points) Increase the number of hidden nodes until you get the following error: “Error in nnet.default(x, y, w, entropy = TRUE, ...): too many (1026) weights.” Use the maximum number of hidden nodes that you can use to build your ANN classifier. 
+10.2.1.	What is the maximum number of hidden nodes that we could use? 
+10.2.2.	Use the code in Module 6 to calculate AUC and create the ROC curve. 
+10.2.2.1.	What is the value of AUC? 
+10.2.2.2.	Paste the ROC curve in the space below:
+```{r}
+i=6
+while(i>5){
+  ann <- nnet(gen_election ~ ., data=data.train, size=i, maxit=1000) 
+  i=i+1
+}
+i
+```
+
+```{r}
+ann <- nnet(gen_election ~ ., data=data.train, size=24, maxit=1000) 
+
+```
+
+```{r }
+library(ROCR)
+library(ggplot2)
+predicted_values <- predict(ann, data.test,type = "raw")
+pred <- prediction(predicted_values, data.test$gen_election)
+perf <- performance(pred, measure = "tpr", x.measure = "fpr")
+auc <- performance(pred, measure = "auc")
+auc <- auc@y.values[[1]]
+roc.data <- data.frame(fpr=unlist(perf@x.values),
+                       tpr=unlist(perf@y.values),
+                       model="ANN")
+ggplot(roc.data, aes(x=fpr, ymin=0, ymax=tpr)) +
+  geom_ribbon(alpha=0.2) +
+  geom_line(aes(y=tpr)) +
+  ggtitle(paste0("ROC Curve w/ AUC=", auc))
+
+```
+```{r}
+ftable(xtabs(~facebook+gen_election, data=data))
+ftable(xtabs(~twitter+gen_election, data=data))
+ftable(xtabs(~youtube+gen_election, data=data))
+```
