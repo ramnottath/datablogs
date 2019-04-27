@@ -2,9 +2,9 @@
   url: /about/
 - item: Blog
   url: /
-- item: Category A
+- item: Data Integration
   url: /categories/development/
-- item: Category B
+- item: Data Analytics
   url: /categories/golang/
 - item: Tag B
   url: /tags/go/
