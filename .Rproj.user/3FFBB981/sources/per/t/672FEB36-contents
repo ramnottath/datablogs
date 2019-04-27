@@ -1,8 +1,0 @@
-baseurl = "https://example.com/"
-title = "Discovering Data"
-theme = "hugo-swift-theme"
-author = "Ramkumar Nottath"
-canonifyurls = true
-paginate = 4
-[params]
-  staticman = false # turn this to true to enable staticman. See theme README
