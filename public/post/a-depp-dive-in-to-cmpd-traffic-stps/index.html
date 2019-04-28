@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+  <title>Discovering the Goodness in Data</title>
+  <meta charset='utf-8'>
+  <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+  <meta http-equiv = 'X-UA-Compatible' content = 'IE=edge'>
+  <meta name = 'SKYPE_TOOLBAR' content = 'SKYPE_TOOLBAR_PARSER_COMPATIBLE' />
+  <meta name = 'keywords' content = 'Discovering the Goodness in Data'>
+  <meta property = 'og:locale' content = 'en_US' />
+  <meta property = 'og:type' content = 'article' />
+  <meta property = 'og:title' content = 'A Deep Dive in to CMPD Traffic Stops' />
+  <meta property = 'og:description' content = ' Analyzing CMPD Traffic Stops In this post, we’ll examine a data set of stops by the Charlotte-Mecklenburg Police Department (CMPD).
+Our focus will be …'>
+  <meta property = 'og:url' content = '/post/a-depp-dive-in-to-cmpd-traffic-stps/' />
+  <meta property = 'og:image' content = '/images/viz.png'/>
+
+  <link rel="apple-touch-icon" sizes="180x180" href = '/images/icons/apple-touch-icon.png'>
+  <link rel="icon" type="image/png" sizes="32x32" href = '/images/icons/favicon-32x32.png'>
+  <link rel="icon" type="image/png" sizes="16x16" href= '/images/icons/favicon-16x16.png'>
+  <link rel='canonical' href="/post/a-depp-dive-in-to-cmpd-traffic-stps/">
+  <link rel = 'stylesheet' href = '/main.css' integrity = ''>
+</head>
+  <body>
+    <div class = 'nav-drop'>
+  <div class = 'nav-body'>
+  
+    <div class = 'nav-close'></div>
+  </div>
+</div>
+
+    <header class = 'nav' >
+  <nav class = 'nav-menu'>
+    <a href='/' class = 'nav-brand'>Discovering the Goodness in Data</a>
+    <div class = 'nav-bar'>&#9776;</div>
+  </nav>
+</header>
+    <main>
+      
+<section class = 'post_header' style = 'background-image:url(/images/viz.png);'>
+  <h1 class='post_title' itemprop='name headline'>A Deep Dive in to CMPD Traffic Stops</h1>
+  
+  
+  
+  </p>
+</section>
+<div class = 'post'>
+  <article class='post_content' itemprop='articleBody'>
+    
+
+
+<div id="analyzing-cmpd-traffic-stops" class="section level1">
+<h1>Analyzing CMPD Traffic Stops</h1>
+<p>In this post, we’ll examine a data set of stops by the Charlotte-Mecklenburg Police Department (CMPD).</p>
+<p>Our focus will be to understand what factors are related to whether someone is searched or not for a traffic stop.</p>
+<pre class="r"><code>library(dplyr)
+library(tidyverse)
+library(scales)
+library(ggspatial)
+library(ggplot2)
+library(stringr)
+library(lubridate)
+library(sf)
+library(viridis)
+library(ggridges)
+library(gapminder)
+library(forcats)
+library(plotly)
+df &lt;- read_csv(&quot;Officer_Traffic_Stops.csv&quot;)
+head (df)</code></pre>
+<pre><code>## # A tibble: 6 x 17
+##   Month_of_Stop Reason_for_Stop Officer_Race Officer_Gender
+##   &lt;chr&gt;         &lt;chr&gt;           &lt;chr&gt;        &lt;chr&gt;         
+## 1 2017/06       Vehicle Regula… White        Female        
+## 2 2017/06       Vehicle Regula… White        Male          
+## 3 2017/06       Stop Light/Sign White        Male          
+## 4 2017/06       Vehicle Equipm… White        Male          
+## 5 2017/06       Stop Light/Sign White        Male          
+## 6 2017/06       Stop Light/Sign White        Female        
+## # … with 13 more variables: Officer_Years_of_Service &lt;dbl&gt;,
+## #   Driver_Race &lt;chr&gt;, Driver_Ethnicity &lt;chr&gt;, Driver_Gender &lt;chr&gt;,
+## #   Driver_Age &lt;dbl&gt;, Was_a_Search_Conducted &lt;chr&gt;, Result_of_Stop &lt;chr&gt;,
+## #   CMPD_Division &lt;chr&gt;, ObjectID &lt;dbl&gt;, CreationDate &lt;dttm&gt;,
+## #   Creator &lt;chr&gt;, EditDate &lt;dttm&gt;, Editor &lt;chr&gt;</code></pre>
+</div>
+
+  </article>
+  
+  <aside>
+    <h3><span class = 'pretty'>Recent Posts</span></h3>
+    <ul class='flex post_aside'>
+      
+       <li class = 'duo post_item'>
+  <a class = 'show' href='/post/a-depp-dive-in-to-cmpd-traffic-stps/' title = 'A Deep Dive in to CMPD Traffic Stops' style = 'background-image: url(/images/viz.png);'>
+  </a>
+  <div class = 'excerpt'>
+    
+    <h3 class = 'post_link'>
+      <a href='/post/a-depp-dive-in-to-cmpd-traffic-stps/'>A Deep Dive in to CMPD Traffic Stops</a>
+    </h3>
+    <p class = 'pale'> Analyzing CMPD Traffic Stops In this post, we’ll examine a data set of stops by the …</p>
+  </div>
+</li>
+      
+       <li class = 'duo post_item'>
+  <a class = 'show' href='/post/visualizing-data-an-art/' title = 'Visualizing Data - An Art' style = 'background-image: url(/images/viz.png);'>
+  </a>
+  <div class = 'excerpt'>
+    
+    <h3 class = 'post_link'>
+      <a href='/post/visualizing-data-an-art/'>Visualizing Data - An Art</a>
+    </h3>
+    <p class = 'pale'> Will uddate the content later. Updated to check git changes. One more change to check the …</p>
+  </div>
+</li>
+      
+    </ul>
+  </aside>
+</div>
+<script src = '/js/autosize.min.js'></script>
+<script src = '/js/timeago.js'></script>
+
+    </main>
+    <footer class = 'footer'>
+  <div class = 'footer_inner'>
+    <p>&copy;<span class = 'year'></span> . Discovering the Goodness in Data</p>
+    <p class = 'mute'>Designed by <a href = '' target = '_blank' title = 'Linkedin Profile' rel = 'nonopener'> </a></p>
+  </div>
+</footer>
+<script src = 'https://code.jquery.com/jquery-3.1.0.min.js'   integrity='sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s='   crossorigin='anonymous'></script>
+<script src = '/js/index.js'></script>
+  </body>
+</html>

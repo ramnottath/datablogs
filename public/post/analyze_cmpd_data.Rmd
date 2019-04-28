@@ -1,0 +1,35 @@
+---
+title: A Deep Dive in to CMPD Traffic Stops
+author: Ramkumar Nottath
+date: '2019-04-27'
+image: viz.png
+slug: a-depp-dive-in-to-cmpd-traffic-stps
+categories: []
+tags: []
+fig_width: 8
+fig_height: 6
+---
+
+# Analyzing CMPD Traffic Stops
+
+In this post, we'll examine a data set of stops by the Charlotte-Mecklenburg Police Department (CMPD). 
+
+Our focus will be to understand what factors are related to whether someone is searched or not for a traffic stop.
+
+```{r load-packages-data, warning=FALSE, message=FALSE}
+library(dplyr)
+library(tidyverse)
+library(scales)
+library(ggspatial)
+library(ggplot2)
+library(stringr)
+library(lubridate)
+library(sf)
+library(viridis)
+library(ggridges)
+library(gapminder)
+library(forcats)
+library(plotly)
+df <- read_csv("Officer_Traffic_Stops.csv")
+head (df)
+```
