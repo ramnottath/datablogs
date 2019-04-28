@@ -1,4 +1,4 @@
-baseurl = "https://ramnottath.netlify.com/"
+baseurl = "/"
 title = "Discovering the Goodness in Data"
 theme = "hugo-swift-theme"
 author = "Ramkumar Nottath"
