@@ -4,5 +4,5 @@ image: read.jpg
 title: About Ramkumar Nottath
 ---
 
-A senior technology architect working with Infosys Ltd who loved to explore data
+A senior technology architect working with Infosys Ltd who loves to explore data
 
